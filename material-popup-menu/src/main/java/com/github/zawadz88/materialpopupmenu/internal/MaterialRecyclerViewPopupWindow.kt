@@ -168,14 +168,25 @@ internal class MaterialRecyclerViewPopupWindow(
         }
     }
 
+    fun isActivity(context: Context):Boolean{
+        var ctx = context
+        while(ctx is ContextWrapper){
+            if(ctx is Activity){
+                return true
+            }
+            ctx = ctx.baseContext
+        }
+        return false
+    }    
+     
     /**
      * Show the popupMenu list. If the list is already showing, this method
      * will recalculate the popupMenu's size and position.
-     */
+     */   
     internal fun show() {
         checkNotNull(anchorView) { "Anchor view must be set!" }
         val height = buildDropDown()
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+        if (!isActivity(context) && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             PopupWindowCompat.setWindowLayoutType(popup, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
         } else {
             PopupWindowCompat.setWindowLayoutType(popup, WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL)
