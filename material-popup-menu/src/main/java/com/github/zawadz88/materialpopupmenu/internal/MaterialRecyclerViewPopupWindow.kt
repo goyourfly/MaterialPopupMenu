@@ -175,9 +175,11 @@ internal class MaterialRecyclerViewPopupWindow(
     internal fun show() {
         checkNotNull(anchorView) { "Anchor view must be set!" }
         val height = buildDropDown()
-
-        PopupWindowCompat.setWindowLayoutType(popup, WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL)
-
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            PopupWindowCompat.setWindowLayoutType(popup, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+        } else {
+            PopupWindowCompat.setWindowLayoutType(popup, WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL)
+        }
         val widthSpec = dropDownWidth
         if (popup.isShowing) {
 
