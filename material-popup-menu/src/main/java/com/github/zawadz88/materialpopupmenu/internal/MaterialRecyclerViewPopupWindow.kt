@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
+import android.content.ContextWrapper
+import android.app.Activity
 import androidx.appcompat.widget.createAppCompatPopupWindow
 import androidx.core.widget.PopupWindowCompat
 import androidx.recyclerview.widget.LinearLayoutManager
