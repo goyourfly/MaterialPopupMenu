@@ -1,24 +1,23 @@
 package com.github.zawadz88.materialpopupmenu.internal
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
+import android.graphics.Point
 import android.graphics.Rect
 import android.os.Build
 import android.util.Log
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.PopupWindow
-import android.content.ContextWrapper
-import android.app.Activity
 import androidx.appcompat.widget.createAppCompatPopupWindow
 import androidx.core.widget.PopupWindowCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.zawadz88.materialpopupmenu.R
 import java.lang.reflect.Method
+
 
 /**
  * A more Material version of [androidx.appcompat.widget.ListPopupWindow] based on [RecyclerView].
@@ -117,6 +116,8 @@ internal class MaterialRecyclerViewPopupWindow(
 
     private val popupPaddingTop: Int
 
+    private var contentMaxHeight = -1
+
     init {
         popup = createAppCompatPopupWindow(context)
         popup.inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
@@ -170,21 +171,21 @@ internal class MaterialRecyclerViewPopupWindow(
         }
     }
 
-    fun isActivity(context: Context):Boolean{
+    private fun isActivity(context: Context): Boolean {
         var ctx = context
-        while(ctx is ContextWrapper){
-            if(ctx is Activity){
+        while (ctx is ContextWrapper) {
+            if (ctx is Activity) {
                 return true
             }
             ctx = ctx.baseContext
         }
         return false
-    }    
-     
+    }
+
     /**
      * Show the popupMenu list. If the list is already showing, this method
      * will recalculate the popupMenu's size and position.
-     */   
+     */
     internal fun show() {
         checkNotNull(anchorView) { "Anchor view must be set!" }
         val height = buildDropDown()
@@ -309,7 +310,22 @@ internal class MaterialRecyclerViewPopupWindow(
             otherHeights += padding + listPadding
         }
 
-        return listContent + otherHeights
+        val listSize = listContent + otherHeights
+        if(contentMaxHeight == -1){
+            contentMaxHeight = getMaxHeight()
+        }
+        if(listSize> contentMaxHeight){
+            return contentMaxHeight
+        }
+        return listSize
+    }
+
+    private fun getMaxHeight(): Int {
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = wm.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        return size.y * 3/4
     }
 
     /**
